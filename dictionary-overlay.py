@@ -44,6 +44,8 @@ async def parse(sentence: str):
 def new_word_p(word: str) -> bool:
     if len(word) < 3:
         return False
+    if re.search(r"[^aeiouy]{4,}", word, re.M | re.I):
+        return False
     if re.search(r"[^a-z]", word, re.M | re.I):
         return False
     return not in_or_stem_in(word, known_words)
