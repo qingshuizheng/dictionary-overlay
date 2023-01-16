@@ -203,9 +203,10 @@ async def web_translate(word: str) -> list:
         if shutil.which("crow"):
             result = get_command_result(f'crow -t zh-CN --json -e {crow_engine} "{word}"')
             return [json.loads(result)["translation"]]
-        import google_translate
-        result = google_translate.translate(word, dst_lang='zh')
-        return result["trans"]
+        from googletrans.client import Translator
+        translator = Translator()
+        translated = translator.translate(word, dest='zh-CN')
+        return translated.text.split()
     except ImportError:
         msg= f"[Dictionary-overlay]you do not have a network dictionary installed and the queried word [\"{word}\"] is not in the local dictionary, please install crow-translate or google-translate"
         print(msg)
