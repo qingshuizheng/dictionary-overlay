@@ -151,8 +151,10 @@
   :group 'dictionary-overlay)
 
 (defvar dictionary-overlay-py-path
-  (concat (file-name-directory load-file-name)
-          "dictionary-overlay.py"))
+  (expand-file-name
+   "dictionary-overlay.py"
+   (file-name-directory
+    (or load-file-name buffer-file-name))))
 
 (defvar dictionary-overlay-py-requirements-path
   (concat (file-name-directory load-file-name) "requirements.txt"))
