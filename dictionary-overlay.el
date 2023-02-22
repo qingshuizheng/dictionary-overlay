@@ -313,15 +313,14 @@ You can re-bind the commands to any keys you prefer.")
 (defun dictionary-overlay-render-buffer ()
   "Render current buffer."
   (interactive)
-  (if (not (dictionary-overlay-ready-p))
-      (message "Dictionary-Overlay not ready, please wait a second.")
-    (when (not (member "dictionary-overlay" websocket-bridge-app-list))
-      (dictionary-overlay-start))
-    (setq-local dictionary-overlay-active-p t)
-    (dictionary-overlay-refresh-buffer)
-    (when (member 'render-buffer dictionary-overlay-auto-jump-after)
-      (websocket-bridge-call-buffer "jump_next_unknown_word"))
-    ))
+  (unless (and (member "dictionary-overlay" websocket-bridge-app-list)
+               (boundp 'websocket-bridge-client-dictionary-overlay))
+    (dictionary-overlay-start)
+    (sleep-for 1))
+  (setq-local dictionary-overlay-active-p t)
+  (dictionary-overlay-refresh-buffer)
+  (when (member 'render-buffer dictionary-overlay-auto-jump-after)
+    (websocket-bridge-call-buffer "jump_next_unknown_word")))
 
 (defun dictionary-overlay-toggle ()
   "Toggle current buffer."
@@ -598,12 +597,6 @@ dictionary-overlay gets."
                            word
                            translation))
   (dictionary-overlay-render-buffer))
-
-(defun dictionary-overlay-ready-p ()
-  "Check diction-overly if ready."
-  (and
-   (member "dictionary-overlay" websocket-bridge-app-list)
-   (boundp 'websocket-bridge-client-dictionary-overlay)))
 
 (provide 'dictionary-overlay)
 ;;; dictionary-overlay.el ends here
